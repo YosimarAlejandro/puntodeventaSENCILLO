@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiPOS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+683115a8d4c076c79aa0a559a88d58e25628b617")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ba5f49f5f979288f0540846ce7d3a412f794e8f6")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiPOS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiPOS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

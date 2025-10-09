@@ -3,12 +3,12 @@ using System.Windows.Forms;
 using MiPOS.Views.Sales;
 using MiPOS.Views.Admin;
 using System.Drawing;
+using MiPOS.UI;
 
 namespace MiPOS
 {
     public class MainForm : Form
     {
-        // UI
         private MenuStrip menu = null!;
         private ToolStripMenuItem menuArchivo = null!;
         private ToolStripMenuItem menuVentas = null!;
@@ -19,11 +19,9 @@ namespace MiPOS
         private Button btnSideBackup = null!;
         private Label lblUserInfo = null!;
 
-        // UserControls
         private SalesViewControl salesView = null!;
         private AdminViewControl adminView = null!;
 
-        // Estado
         private readonly string role;
         private readonly string username;
         public bool LogoutRequested { get; private set; } = false;
@@ -35,11 +33,11 @@ namespace MiPOS
 
             InitializeComponent();
 
-            // Crear las vistas
+            // crear vistas
             salesView = new SalesViewControl(role, username);
             adminView = new AdminViewControl();
 
-            ShowSalesView(); // vista por defecto
+            ShowSalesView();
             ApplyRoleVisibility();
         }
 
@@ -50,7 +48,7 @@ namespace MiPOS
             Height = 640;
             StartPosition = FormStartPosition.CenterScreen;
 
-            // MenuStrip superior
+            // MenuStrip
             menu = new MenuStrip();
             menuArchivo = new ToolStripMenuItem("Archivo");
             var mnuCerrarSesion = new ToolStripMenuItem("Cerrar sesión", null, MnuCerrarSesion_Click);
@@ -76,30 +74,32 @@ namespace MiPOS
             menu.Items.Add(menuAdmin);
             Controls.Add(menu);
 
-            // Sidebar
-            sidebar = new Panel { Left = 0, Top = menu.Height, Width = 180, Height = ClientSize.Height - menu.Height, BackColor = Color.FromArgb(45, 45, 48), Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left };
-            btnSideNewSale = new Button { Text = "Nueva venta", Left = 10, Top = 20, Width = 160, Height = 40, FlatStyle = FlatStyle.Flat };
+            // sidebar
+            sidebar = new Panel { Left = 0, Top = menu.Height, Width = 200, Height = ClientSize.Height - menu.Height, BackColor = Theme.Sidebar, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left };
+            btnSideNewSale = new Button { Text = "Nueva venta", Left = 10, Top = 20, Width = 180, Height = 44 };
             btnSideNewSale.Click += (s, e) => ShowSalesView();
-            btnSideBackup = new Button { Text = "Respaldos", Left = 10, Top = 70, Width = 160, Height = 40, FlatStyle = FlatStyle.Flat };
+            Theme.StylePrimaryButton(btnSideNewSale);
+            Theme.WithIcon(btnSideNewSale, "💸");
+
+            btnSideBackup = new Button { Text = "Respaldos", Left = 10, Top = 80, Width = 180, Height = 44 };
             btnSideBackup.Click += (s, e) => { if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { ShowAdminView(); } else MessageBox.Show("Acceso denegado"); };
+            Theme.StyleSecondaryButton(btnSideBackup);
+            Theme.WithIcon(btnSideBackup, "🗄️", primary: false);
 
-            lblUserInfo = new Label { Left = 10, Top = 520, Width = 160, ForeColor = Color.White, TextAlign = ContentAlignment.MiddleCenter };
-            lblUserInfo.Text = $"{username}\n({role})";
-
-            foreach (Control c in new Control[] { btnSideNewSale, btnSideBackup, lblUserInfo })
-            {
-                c.BackColor = Color.FromArgb(63, 63, 70);
-                c.ForeColor = Color.White;
-            }
+            lblUserInfo = new Label { Left = 10, Top = 520, Width = 180, ForeColor = Color.White, TextAlign = ContentAlignment.MiddleCenter, Text = $"{username}\n({role})" };
 
             sidebar.Controls.Add(btnSideNewSale);
             sidebar.Controls.Add(btnSideBackup);
             sidebar.Controls.Add(lblUserInfo);
+            Theme.StyleSidebar(sidebar);
             Controls.Add(sidebar);
 
-            // mainArea
-            mainArea = new Panel { Left = sidebar.Right + 10, Top = menu.Height + 10, Width = ClientSize.Width - sidebar.Width - 30, Height = ClientSize.Height - menu.Height - 30, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right, BorderStyle = BorderStyle.None };
+            // main area
+            mainArea = new Panel { Left = sidebar.Right + 10, Top = menu.Height + 10, Width = ClientSize.Width - sidebar.Width - 30, Height = ClientSize.Height - menu.Height - 30, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right, BackColor = Theme.PanelLight };
             Controls.Add(mainArea);
+
+            // Apply global theme
+            Theme.Apply(this);
 
             this.Resize += (s, e) =>
             {
@@ -140,11 +140,6 @@ namespace MiPOS
         {
             this.LogoutRequested = false;
             Application.Exit();
-        }
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
-            base.OnFormClosed(e);
         }
     }
 }

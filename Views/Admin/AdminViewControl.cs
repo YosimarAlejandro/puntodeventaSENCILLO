@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using MiPOS.Models;
+using MiPOS.UI;
+using System.Drawing;
 
 namespace MiPOS.Views.Admin
 {
@@ -23,26 +25,31 @@ namespace MiPOS.Views.Admin
         private void InitializeComponent()
         {
             Dock = DockStyle.Fill;
+            BackColor = Theme.PanelLight;
 
-            btnGenCsv = new Button { Left = 10, Top = 10, Width = 220, Height = 40, Text = "Generar reportes (CSV)" };
+            btnGenCsv = new Button { Left = 10, Top = 10, Width = 220, Height = 44, Text = "Generar reportes (CSV)" };
+            Theme.StylePrimaryButton(btnGenCsv);
+            Theme.WithIcon(btnGenCsv, "📊");
             btnGenCsv.Click += (s, e) => GenerateCsvTotals();
             Controls.Add(btnGenCsv);
 
-            btnBackupDb = new Button { Left = 240, Top = 10, Width = 220, Height = 40, Text = "Crear respaldo BD" };
+            btnBackupDb = new Button { Left = 250, Top = 10, Width = 220, Height = 44, Text = "Crear respaldo BD" };
+            Theme.StyleSecondaryButton(btnBackupDb);
+            Theme.WithIcon(btnBackupDb, "💾", primary: false);
             btnBackupDb.Click += (s, e) => BackupDb();
             Controls.Add(btnBackupDb);
 
-            txtOutput = new TextBox { Left = 10, Top = 60, Width = 800, Height = 400, Multiline = true, ScrollBars = ScrollBars.Vertical, ReadOnly = true, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
+            txtOutput = new TextBox { Left = 10, Top = 70, Width = 920, Height = 420, Multiline = true, ScrollBars = ScrollBars.Vertical, ReadOnly = true, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
+            txtOutput.Font = new Font("Consolas", 10);
             Controls.Add(txtOutput);
 
             this.Resize += (s, e) =>
             {
                 txtOutput.Width = Math.Max(300, this.ClientSize.Width - 20);
-                txtOutput.Height = Math.Max(200, this.ClientSize.Height - 70);
+                txtOutput.Height = Math.Max(200, this.ClientSize.Height - 80);
             };
         }
 
-        // <-- Hice públicas estas dos funciones para que MainForm pueda llamarlas -->
         public void GenerateCsvTotals()
         {
             try

@@ -4,12 +4,13 @@ using System.Windows.Forms;
 using MiPOS.Models;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using MiPOS.UI;
+using System.Drawing;
 
 namespace MiPOS.Views.Sales
 {
     public class SalesViewControl : UserControl
     {
-        // UI
         private TextBox txtMonto = null!;
         private Button btnAgregar = null!;
         private Button btnActualizar = null!;
@@ -32,31 +33,38 @@ namespace MiPOS.Views.Sales
         private void InitializeComponent()
         {
             Dock = DockStyle.Fill;
+            BackColor = Theme.PanelLight;
 
-            txtMonto = new TextBox { Left = 10, Top = 10, Width = 360, Font = new System.Drawing.Font("Segoe UI", 20), Anchor = AnchorStyles.Top | AnchorStyles.Left };
-            txtMonto.KeyPress += TxtMonto_KeyPress;
+            txtMonto = new TextBox { Left = 10, Top = 10, Width = 400, Font = Theme.LargeInputFont, Anchor = AnchorStyles.Top | AnchorStyles.Left };
+            Theme.SetPlaceholder(txtMonto, "0.00");
             Controls.Add(txtMonto);
 
-            btnAgregar = new Button { Left = 380, Top = 10, Width = 120, Height = 45, Text = "Agregar", Anchor = AnchorStyles.Top | AnchorStyles.Left };
+            btnAgregar = new Button { Left = 420, Top = 10, Width = 120, Height = 50, Text = "Agregar" };
+            Theme.StylePrimaryButton(btnAgregar);
+            Theme.WithIcon(btnAgregar, "➕");
             btnAgregar.Click += BtnAgregar_Click;
             Controls.Add(btnAgregar);
 
-            btnActualizar = new Button { Left = 510, Top = 10, Width = 120, Height = 45, Text = "Actualizar", Anchor = AnchorStyles.Top | AnchorStyles.Left };
+            btnActualizar = new Button { Left = 550, Top = 10, Width = 120, Height = 50, Text = "Actualizar" };
+            Theme.StyleSecondaryButton(btnActualizar);
+            Theme.WithIcon(btnActualizar, "✏️", primary: false);
             btnActualizar.Click += BtnActualizar_Click;
             Controls.Add(btnActualizar);
 
-            btnBorrar = new Button { Left = 640, Top = 10, Width = 120, Height = 45, Text = "Borrar", Anchor = AnchorStyles.Top | AnchorStyles.Left };
+            btnBorrar = new Button { Left = 680, Top = 10, Width = 120, Height = 50, Text = "Borrar" };
+            Theme.StyleSecondaryButton(btnBorrar);
+            Theme.WithIcon(btnBorrar, "🗑️", primary: false);
             btnBorrar.Click += BtnBorrar_Click;
             Controls.Add(btnBorrar);
 
-            lvSales = new ListView { Left = 10, Top = 70, Width = 800, Height = 400, View = View.Details, FullRowSelect = true, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
+            lvSales = new ListView { Left = 10, Top = 80, Width = 920, Height = 420, View = View.Details, FullRowSelect = true, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
             lvSales.Columns.Add("Id", 60);
-            lvSales.Columns.Add("Fecha", 200);
-            lvSales.Columns.Add("Monto", 120);
+            lvSales.Columns.Add("Fecha", 260);
+            lvSales.Columns.Add("Monto", 140);
+            lvSales.Font = new Font("Segoe UI", 10);
             lvSales.SelectedIndexChanged += LvSales_SelectedIndexChanged;
             Controls.Add(lvSales);
 
-            // Resize: make the ListView fill width when parent resizes
             this.Resize += (s, e) =>
             {
                 lvSales.Width = Math.Max(400, this.ClientSize.Width - 20);
@@ -90,7 +98,10 @@ namespace MiPOS.Views.Sales
         private bool TryParseMonto(out decimal monto)
         {
             monto = 0;
-            var txt = txtMonto.Text.Trim().Replace(',', '.');
+            var txt = txtMonto.Text.Trim();
+            var ph = txtMonto.Tag as string;
+            if (!string.IsNullOrEmpty(ph) && txt == ph) { return false; }
+            txt = txt.Replace(',', '.');
             return decimal.TryParse(txt, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out monto) && monto >= 0;
         }
 
@@ -102,7 +113,7 @@ namespace MiPOS.Views.Sales
                 db.Sales.Add(sale);
                 db.SaveChanges();
                 LoadSales();
-                txtMonto.Clear();
+                txtMonto.Text = "";
             }
             else MessageBox.Show("Monto inválido", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
@@ -119,7 +130,7 @@ namespace MiPOS.Views.Sales
                 sale.Monto = monto;
                 db.SaveChanges();
                 LoadSales();
-                txtMonto.Clear();
+                txtMonto.Text = "";
             }
         }
 
@@ -148,10 +159,7 @@ namespace MiPOS.Views.Sales
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db?.Dispose();
-            }
+            if (disposing) db?.Dispose();
             base.Dispose(disposing);
         }
     }
