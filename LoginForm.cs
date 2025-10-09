@@ -5,10 +5,10 @@ namespace MiPOS
 {
     public class LoginForm : Form
     {
-        TextBox txtUser;
-        TextBox txtPass;
-        Button btnLogin;
-        Button btnCancelar;
+        TextBox txtUser = null!;
+        TextBox txtPass = null!;
+        Button btnLogin = null!;
+        Button btnCancelar = null!;
 
         public bool Authenticated { get; private set; } = false;
         public string? Role { get; private set; }
@@ -33,7 +33,7 @@ namespace MiPOS
             btnLogin.Click += BtnLogin_Click;
 
             btnCancelar = new Button { Text = "Cancelar", Left = 220, Width = 90, Top = 100 };
-            btnCancelar.Click += (s,e) => { Authenticated = false; this.Close(); };
+            btnCancelar.Click += (s, e) => { Authenticated = false; this.Close(); };
 
             Controls.Add(lblUser);
             Controls.Add(txtUser);
