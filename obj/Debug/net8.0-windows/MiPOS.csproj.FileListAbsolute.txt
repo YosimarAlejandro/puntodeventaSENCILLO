@@ -58,3 +58,4 @@ C:\Users\al222\OneDrive\Desktop\MiPOS\obj\Debug\net8.0-windows\refint\MiPOS.dll
 C:\Users\al222\OneDrive\Desktop\MiPOS\obj\Debug\net8.0-windows\MiPOS.pdb
 C:\Users\al222\OneDrive\Desktop\MiPOS\obj\Debug\net8.0-windows\MiPOS.genruntimeconfig.cache
 C:\Users\al222\OneDrive\Desktop\MiPOS\obj\Debug\net8.0-windows\ref\MiPOS.dll
+C:\Users\al222\OneDrive\Desktop\MiPOS\obj\Debug\net8.0-windows\MiPOS.sourcelink.json
