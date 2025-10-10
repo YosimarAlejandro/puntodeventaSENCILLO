@@ -4,6 +4,8 @@ using MiPOS.Views.Sales;
 using MiPOS.Views.Admin;
 using System.Drawing;
 using MiPOS.UI;
+using MiPOS.Models;
+
 
 namespace MiPOS
 {
@@ -31,15 +33,17 @@ namespace MiPOS
             this.role = role;
             this.username = username;
 
-            InitializeComponent();
-
-            // crear vistas
+            // crear vistas ANTES de inicializar componentes
             salesView = new SalesViewControl(role, username);
             adminView = new AdminViewControl();
+
+            InitializeComponent();
 
             ShowSalesView();
             ApplyRoleVisibility();
         }
+
+
 
         private void InitializeComponent()
         {
@@ -50,6 +54,8 @@ namespace MiPOS
 
             // MenuStrip
             menu = new MenuStrip();
+
+            // Archivo
             menuArchivo = new ToolStripMenuItem("Archivo");
             var mnuCerrarSesion = new ToolStripMenuItem("Cerrar sesión", null, MnuCerrarSesion_Click);
             var mnuSalir = new ToolStripMenuItem("Salir", null, MnuSalir_Click);
@@ -57,22 +63,68 @@ namespace MiPOS
             menuArchivo.DropDownItems.Add(new ToolStripSeparator());
             menuArchivo.DropDownItems.Add(mnuSalir);
 
+            // Ventas
             menuVentas = new ToolStripMenuItem("Ventas");
             var mnuNueva = new ToolStripMenuItem("Nueva venta", null, (s, e) => ShowSalesView());
             var mnuListado = new ToolStripMenuItem("Listado ventas", null, (s, e) => ShowSalesView());
             menuVentas.DropDownItems.Add(mnuNueva);
             menuVentas.DropDownItems.Add(mnuListado);
 
+            // Administración
             menuAdmin = new ToolStripMenuItem("Administración");
-            var mnuReportes = new ToolStripMenuItem("Reportes (CSV)", null, (s, e) => { adminView.GenerateCsvTotals(); });
-            var mnuRespaldos = new ToolStripMenuItem("Respaldos (BD)", null, (s, e) => { adminView.BackupDb(); });
+
+            // Submenú Productos
+            var mnuProductos = new ToolStripMenuItem("Productos");
+
+            // Abrir panel de gestión (AdminView)
+            var mnuGestionarProductos = new ToolStripMenuItem("Gestionar productos", null, (s, e) =>
+            {
+                ShowAdminView();
+                try { adminView.LoadProducts(); } catch { }
+            });
+
+            // Abrir diálogo para agregar producto rápido desde el menú
+            var mnuAgregarProducto = new ToolStripMenuItem("Agregar producto", null, (s, e) =>
+            {
+                using (var dbLocal = new PosDbContext())
+                {
+                    var dlg = new MiPOS.Views.Admin.ProductDialog();
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        // validar barcode duplicado
+                        if (dbLocal.Products.Any(p => p.Barcode == dlg.Product.Barcode))
+                        {
+                            MessageBox.Show("Ya existe un producto con ese barcode.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else
+                        {
+                            dbLocal.Products.Add(dlg.Product);
+                            dbLocal.SaveChanges();
+                            MessageBox.Show("Producto agregado.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            try { adminView.LoadProducts(); } catch { }
+                        }
+                    }
+                }
+            });
+
+            mnuProductos.DropDownItems.Add(mnuGestionarProductos);
+            mnuProductos.DropDownItems.Add(mnuAgregarProducto);
+
+            // Reportes y Respaldos (mantengo lo que ya tenías)
+            var mnuReportes = new ToolStripMenuItem("Reportes (CSV)", null, (s, e) => { ShowAdminView(); adminView.GenerateCsvTotals(); });
+            var mnuRespaldos = new ToolStripMenuItem("Respaldos (BD)", null, (s, e) => { ShowAdminView(); adminView.BackupDb(); });
+
+            menuAdmin.DropDownItems.Add(mnuProductos);
+            menuAdmin.DropDownItems.Add(new ToolStripSeparator());
             menuAdmin.DropDownItems.Add(mnuReportes);
             menuAdmin.DropDownItems.Add(mnuRespaldos);
 
+            // agregar al menu principal
             menu.Items.Add(menuArchivo);
             menu.Items.Add(menuVentas);
             menu.Items.Add(menuAdmin);
             Controls.Add(menu);
+
 
             // sidebar
             sidebar = new Panel { Left = 0, Top = menu.Height, Width = 200, Height = ClientSize.Height - menu.Height, BackColor = Theme.Sidebar, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left };
@@ -125,10 +177,13 @@ namespace MiPOS
 
         private void ShowAdminView()
         {
+            if (adminView == null) adminView = new AdminViewControl();
             mainArea.Controls.Clear();
             adminView.Dock = DockStyle.Fill;
             mainArea.Controls.Add(adminView);
+            try { adminView.LoadProducts(); } catch { }
         }
+
 
         private void MnuCerrarSesion_Click(object? sender, EventArgs e)
         {

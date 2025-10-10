@@ -6,6 +6,7 @@ namespace MiPOS.Models
     public class PosDbContext : DbContext
     {
         public DbSet<Sale> Sales { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
