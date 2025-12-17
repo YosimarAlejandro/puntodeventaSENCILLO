@@ -133,7 +133,7 @@ namespace MiPOS
             Theme.StylePrimaryButton(btnSideNewSale);
             Theme.WithIcon(btnSideNewSale, "💸");
 
-            btnSideBackup = new Button { Text = "Respaldos", Left = 10, Top = 80, Width = 180, Height = 44 };
+            btnSideBackup = new Button { Text = "Respaldos", Left = 10, Top = 80, Width = 180, Height = 55 };
             btnSideBackup.Click += (s, e) => { if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase)) { ShowAdminView(); } else MessageBox.Show("Acceso denegado"); };
             Theme.StyleSecondaryButton(btnSideBackup);
             Theme.WithIcon(btnSideBackup, "🗄️", primary: false);

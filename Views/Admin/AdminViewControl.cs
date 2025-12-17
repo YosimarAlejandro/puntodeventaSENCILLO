@@ -35,32 +35,32 @@ namespace MiPOS.Views.Admin
             BackColor = Theme.PanelLight;
 
             // Reportes / Backups
-            btnGenCsv = new Button { Left = 10, Top = 10, Width = 220, Height = 44, Text = "Generar reportes (CSV)" };
+            btnGenCsv = new Button { Left = 10, Top = 10, Width = 250, Height = 50, Text = "Generar reportes (CSV)" };
             Theme.StylePrimaryButton(btnGenCsv);
             Theme.WithIcon(btnGenCsv, "📊");
             btnGenCsv.Click += (s, e) => GenerateCsvTotals();
             Controls.Add(btnGenCsv);
 
-            btnBackupDb = new Button { Left = 250, Top = 10, Width = 220, Height = 44, Text = "Crear respaldo BD" };
+            btnBackupDb = new Button { Left = 280, Top = 10, Width = 250, Height = 50, Text = "Crear respaldo BD" };
             Theme.StyleSecondaryButton(btnBackupDb);
             Theme.WithIcon(btnBackupDb, "💾", primary: false);
             btnBackupDb.Click += (s, e) => BackupDb();
             Controls.Add(btnBackupDb);
 
             // Productos - botones CRUD
-            btnAddProduct = new Button { Left = 10, Top = 70, Width = 160, Height = 40, Text = "Agregar producto" };
+            btnAddProduct = new Button { Left = 10, Top = 70, Width = 160, Height = 52, Text = "Agregar producto" };
             Theme.StylePrimaryButton(btnAddProduct);
             Theme.WithIcon(btnAddProduct, "➕");
             btnAddProduct.Click += BtnAddProduct_Click;
             Controls.Add(btnAddProduct);
 
-            btnEditProduct = new Button { Left = 180, Top = 70, Width = 160, Height = 40, Text = "Editar producto" };
+            btnEditProduct = new Button { Left = 180, Top = 70, Width = 160, Height = 52, Text = "Editar producto" };
             Theme.StyleSecondaryButton(btnEditProduct);
             Theme.WithIcon(btnEditProduct, "✏️", primary: false);
             btnEditProduct.Click += BtnEditProduct_Click;
             Controls.Add(btnEditProduct);
 
-            btnDeleteProduct = new Button { Left = 350, Top = 70, Width = 160, Height = 40, Text = "Eliminar producto" };
+            btnDeleteProduct = new Button { Left = 350, Top = 70, Width = 160, Height = 52, Text = "Eliminar producto" };
             Theme.StyleSecondaryButton(btnDeleteProduct);
             Theme.WithIcon(btnDeleteProduct, "🗑️", primary: false);
             btnDeleteProduct.Click += BtnDeleteProduct_Click;
@@ -71,7 +71,7 @@ namespace MiPOS.Views.Admin
             {
                 Left = 10,
                 Top = 120,
-                Width = Math.Max(600, this.ClientSize.Width - 20),
+                Width = Math.Max(600, this.ClientSize.Width - 40),
                 Height = Math.Max(200, this.ClientSize.Height - 140),
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 ReadOnly = true,
